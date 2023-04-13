@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">VKR_new_disign</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_main_login_laoding">Main_Login_Laoding</string>
+    <string name="title_activity_aryph_tester">AryphTesterActivity</string>
+    <string name="title_activity_dex_tester">DexTesterActivity</string>
+</resources>
