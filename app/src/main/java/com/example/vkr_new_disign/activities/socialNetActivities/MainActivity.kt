@@ -14,9 +14,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.vkr_new_disign.activities.loadActivities.Main_Login_Laoding
+import com.example.vkr_new_disign.activities.loadActivities.Main_Login_Loading
+import com.example.vkr_new_disign.activities.loadActivities.demoLoadActivity
 import com.example.vkr_new_disign.activities.mathActivities.AryphTesterActivity
 import com.example.vkr_new_disign.activities.mathActivities.DexTesterActivity
+
 import com.example.vkr_new_disign.ui.theme.VKR_new_disignTheme
 
 class MainActivity : ComponentActivity() {
@@ -63,7 +65,7 @@ class MainActivity : ComponentActivity() {
 
                         TextButton(
                             onClick = {
-                                val intent = Intent(this@MainActivity, Main_Login_Laoding::class.java)
+                                val intent = Intent(this@MainActivity, Main_Login_Loading::class.java)
                                 startActivity(intent)
                             },
                             modifier = Modifier
@@ -71,7 +73,7 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxWidth()
                                 .height(72.dp)
                         ) {
-                            textPrint(text = "Login", style = MaterialTheme.typography.button)
+                            textPrint(text = "Login", style = MaterialTheme.typography.button, size = 25.sp)
                         }
 
                     }

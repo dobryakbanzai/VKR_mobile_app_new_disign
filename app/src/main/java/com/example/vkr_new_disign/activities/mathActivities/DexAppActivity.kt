@@ -2,22 +2,16 @@ package com.example.vkr_new_disign.activities.mathActivities
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,74 +21,60 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.vkr_new_disign.activities.socialNetActivities.LoginActivity
-import com.example.vkr_new_disign.mathBlock.E
-import com.example.vkr_new_disign.mathBlock.Gen
 import com.example.vkr_new_disign.mathBlock.Gend
-import com.example.vkr_new_disign.mathBlock.expression
+import com.example.vkr_new_disign.networkBlock.Token
+import com.example.vkr_new_disign.networkBlock.addAryphProg
+import com.example.vkr_new_disign.networkBlock.addDerProg
 import com.example.vkr_new_disign.networkBlock.getDeriv
-import com.example.vkr_new_disign.networkBlock.getJWT
 import com.example.vkr_new_disign.ui.theme.VKR_new_disignTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.json.JSONObject
+import kotlinx.coroutines.async
 
-
-var dproblem = mutableStateOf("")
-var dstud_ans = mutableStateOf("")
-var string = mutableStateOf<String>("")
-var btn = mutableStateOf( true)
-
-class DexTesterActivity : ComponentActivity() {
-//    var j = mutableStateOf<JSONObject>(JSONObject("{}"))
-
+var appdproblem = mutableStateOf("")
+var appdstud_ans = mutableStateOf("")
+var appstring = mutableStateOf<String>("")
+var appbtn = mutableStateOf( true)
+var dtoken = mutableStateOf("")
+class DexAppActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
-        var prob = ""
+        var appprob = ""
 
         do {
-            prob = Gend(lengh = 8)
-        }while (prob.length < 3 || "x" !in prob || ("sin" !in prob && "cos" !in prob))
-        dproblem.value = prob
+            appprob = Gend(lengh = 8)
+        }while (appprob.length < 3 || "x" !in appprob || ("sin" !in appprob && "cos" !in appprob))
+        appdproblem.value = appprob
+
+        val sharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+        dtoken.value = sharedPreferences.getString("jwt_token", null).toString()
+
         super.onCreate(savedInstanceState)
         setContent {
-            VKR_new_disignTheme() {
+            VKR_new_disignTheme {
+                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
                     GlobalScope.launch(Dispatchers.Main) {
                         var response = ""
-                        response = getDeriv(dproblem.value)
-                        string.value = response.lowercase()
-                        println("aaa ${string.value}")
+                        response = getDeriv(appdproblem.value)
+                        appstring.value = response.lowercase()
+                        println("aaa ${appstring.value}")
                     }
-                    CalcDex()
-
-
-//                    Text(text = string.value)
-//                    problem.value = string.value
-
+                    AppCalcDex()
                 }
-
             }
         }
     }
-
-
-//    override fun onBackPressed() {
-//        // Создаем Intent для перехода на другую activity и закрытия всех предыдущих
-//        val intent = Intent(this, MainActivity::class.java)
-//        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-//        startActivity(intent)
-//    }
 }
-
 
 @Preview(showBackground = true)
 @Composable
-fun CalcDex(){
+fun AppCalcDex(){
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -120,7 +100,7 @@ fun CalcDex(){
                 backgroundColor = MaterialTheme.colors.secondaryVariant
 
             ) {
-                Text(text = dproblem.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
+                Text(text = appdproblem.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
             }
             Spacer(modifier = Modifier.width(15.dp))
         }
@@ -144,7 +124,7 @@ fun CalcDex(){
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(text = dstud_ans.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
+                    Text(text = appdstud_ans.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
                 }
             }
             Spacer(modifier = Modifier.width(15.dp))
@@ -179,10 +159,10 @@ fun CalcDex(){
             ){
 
 
-                if (btn.value){
-                    BtnBlock()
+                if (appbtn.value){
+                    AppBtnBlock()
                 }else{
-                    BtnBlock1()
+                    AppBtnBlock1()
                 }
 
             }
@@ -196,18 +176,18 @@ fun CalcDex(){
 
 // Блок с кнопками
 @Composable
-fun BtnBlock(){
+fun AppBtnBlock(){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BtnRow(arrayOf("1", "2", "3"))
-        BtnRow(arrayOf("4", "5", "6"))
-        BtnRow(arrayOf("7", "8", "9"))
-        BtnRow(arrayOf("←", "0", "\uD83D\uDC4C"))
-        Button(onClick = { btn.value = !btn.value }) {
-            if (btn.value){
+        AppBtnRow(arrayOf("1", "2", "3"))
+        AppBtnRow(arrayOf("4", "5", "6"))
+        AppBtnRow(arrayOf("7", "8", "9"))
+        AppBtnRow(arrayOf("←", "0", "\uD83D\uDC4C"))
+        Button(onClick = { appbtn.value = !appbtn.value }) {
+            if (appbtn.value){
                 Text(text = "SinCos...")
             }else{
                 Text(text = "12345")
@@ -218,20 +198,20 @@ fun BtnBlock(){
 }
 
 @Composable
-fun BtnBlock1(){
+fun AppBtnBlock1(){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        BtnRow(arrayOf("+", "-", "("))
-        BtnRow(arrayOf("*", "/", ")"))
-        BtnRow(arrayOf( "^", "sin(", "cos("))
-        BtnRow(arrayOf( "←", "x", "\uD83D\uDC4C"))
+        AppBtnRow(arrayOf("+", "-", "("))
+        AppBtnRow(arrayOf("*", "/", ")"))
+        AppBtnRow(arrayOf( "^", "sin(", "cos("))
+        AppBtnRow(arrayOf( "←", "x", "\uD83D\uDC4C"))
 
-        Button(onClick = { btn.value = !btn.value }) {
-            if (btn.value){
+        Button(onClick = { appbtn.value = !appbtn.value }) {
+            if (appbtn.value){
                 Text(text = "SinCos...")
             }else{
                 Text(text = "12345")
@@ -243,7 +223,7 @@ fun BtnBlock1(){
 
 // Строка кнопок
 @Composable
-fun BtnRow(arr: Array<String>){
+fun AppBtnRow(arr: Array<String>){
     Row(
 
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -252,60 +232,77 @@ fun BtnRow(arr: Array<String>){
 
     ) {
         for(e in arr){
-            BtnNew(name = e)
+            AppBtnNew(name = e)
         }
     }
 }
 
 // Отдельная кнопка
 @Composable
-fun BtnNew(name: String, width: Dp = 100.dp){
+fun AppBtnNew(name: String, width: Dp = 100.dp){
     val mContext = LocalContext.current
     var color: Color
     if(name == "\uD83D\uDC4C" || name == "←"){
         color = MaterialTheme.colors.secondary
     }else{
-       color = MaterialTheme.colors.primary
+        color = MaterialTheme.colors.primary
     }
 
     Button(
         onClick = {
             when (name) {
                 "←" -> {
-                    dstud_ans.value = dstud_ans.value.dropLast(1)
+                    appdstud_ans.value = appdstud_ans.value.dropLast(1)
                 }
                 "\uD83D\uDC4C" -> {
+
                     GlobalScope.launch(Dispatchers.Main) {
-                        var response = ""
-                        response = getDeriv(dproblem.value)
-                        string.value = response.lowercase()
-                        println("aaa ${string.value}")
+
+                        var response = getDeriv(appdproblem.value)
+                        appstring.value = response.lowercase()
+
+                        if (appdstud_ans.value == appstring.value){
+                            addDerProg(dtoken.value)
+                        }
+
+
                     }
 
 
 
-                    if (dstud_ans.value == string.value){
+
+
+
+                    if (appdstud_ans.value == appstring.value){
+
+
+                        GlobalScope.launch(Dispatchers.Main) {
+                            addDerProg(dtoken.value)
+                        }
 
 
 
                         mToast("Yeah!!!", mContext)
 
-                        dstud_ans.value = ""
+                        appdstud_ans.value = ""
 
                         var prob = ""
 
                         do {
                             prob = Gend(lengh = 8)
                         }while (prob.length < 3 || "x" !in prob || ("sin" !in prob && "cos" !in prob))
-                        dproblem.value = prob
+                        appdproblem.value = prob
 
+
+
+//
 
                     } else{
                         mToast("NO!!!", mContext)
                     }
                 }
                 else -> {
-                    dstud_ans.value = dstud_ans.value + name
+                    appdstud_ans.value = appdstud_ans.value + name
                 }
             }
         },
@@ -318,6 +315,13 @@ fun BtnNew(name: String, width: Dp = 100.dp){
 //        colors = ButtonDefaults.outlinedButtonColors(contentColor = color)
     ) {
         Text(text = name, fontSize = 30.sp, color = MaterialTheme.colors.primaryVariant, style = MaterialTheme.typography.button)
+    }
+}
+
+private suspend fun adp(token: Token){
+    GlobalScope.launch(Dispatchers.Main) {
+        println("GS2")
+        addDerProg(dtoken.value)
     }
 }
 

@@ -4,4 +4,20 @@
     <string name="title_activity_main_login_laoding">Main_Login_Laoding</string>
     <string name="title_activity_aryph_tester">AryphTesterActivity</string>
     <string name="title_activity_dex_tester">DexTesterActivity</string>
+    <string name="title_activity_demo_load">demoLoadActivity</string>
+    <string name="title_activity_loading_jwt">loadingJWT</string>
+    <string name="title_activity_loading_user_inf_main_menu">loadingUserInf_MainMenu</string>
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="title_activity_account_page">AccountPage</string>
+    <string name="title_activity_registration_page">RegistrationPage</string>
+    <string name="title_activity_aryph_app">AryphAppActivity</string>
+    <string name="title_activity_dex_app">DexAppActivity</string>
+    <string name="title_activity_all_students">AllStudentsActivity</string>
+    <string name="title_activity_all_challenges">AllChallengesActivity</string>
+    <string name="title_activity_account_teacher_page">AccountTeacherPage</string>
+    <string name="title_activity_add_ing_challanges">AddIngChallangesActivity</string>
+    <string name="title_activity_zads_app">ZadsAppActivity</string>
+    <string name="title_activity_all_zads">AllZadsActivity</string>
+    <string name="title_activity_adding_zad">AddingZadActivity</string>
+    <string name="title_activity_all_teacher">AllTeacherActivity</string>
 </resources>

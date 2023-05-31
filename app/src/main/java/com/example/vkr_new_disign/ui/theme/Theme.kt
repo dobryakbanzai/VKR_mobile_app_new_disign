@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 private val DarkColorPalette = darkColors(
     primary = DarkAccent,
     primaryVariant = DarkText,
-    secondary = Teal200,
-    background = DarkBack
+    secondary = Teal400,
+    secondaryVariant = DarkAccent2,
+    background = DarkBack,
+
 
 )
 
@@ -18,7 +20,10 @@ private val LightColorPalette = lightColors(
     primary = LightAccent,
     primaryVariant = LightText,
     secondary = Teal200,
-    background = LightBack
+    secondaryVariant = LightAccent2,
+    background = LightBack,
+
+
 
 
     /* Other default colors to override
@@ -49,3 +54,4 @@ fun VKR_new_disignTheme(
         content = content
     )
 }
+

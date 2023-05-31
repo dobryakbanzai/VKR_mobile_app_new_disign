@@ -1,7 +1,9 @@
 package com.example.vkr_new_disign.ui.theme
 
 
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -35,32 +37,34 @@ val Montserrat = FontFamily(
 val Typography = Typography(
     body1 = TextStyle(
         fontFamily = Montserrat,
-        fontWeight = FontWeight.Light,
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
 
     h1 = TextStyle(
         fontFamily = Montserrat,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontSize = 30.sp
     ),
 
     h2 = TextStyle(
         fontFamily = Montserrat,
-        fontWeight = FontWeight.Light,
-        fontSize = 15.sp
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 35.sp
     ),
 
     button = TextStyle(
         fontFamily = Montserrat,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp
-    )
+    ),
 
 //    caption = TextStyle(
 //        fontFamily = FontFamily.Default,
 //        fontWeight = FontWeight.Normal,
 //        fontSize = 12.sp
 //    )
+
+
 
 )

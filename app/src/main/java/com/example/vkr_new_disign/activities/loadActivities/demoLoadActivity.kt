@@ -6,22 +6,24 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.example.vkr_new_disign.activities.mathActivities.DexTesterActivity
+import com.example.vkr_new_disign.activities.socialNetActivities.AllChallengesActivity
+import com.example.vkr_new_disign.ui.theme.VKR_new_disignTheme
 
-import com.example.vkr_new_disign.activities.socialNetActivities.LoginActivity
+import com.example.vkr_new_disign.activities.socialNetActivities.MainActivity
+import com.example.vkr_new_disign.networkBlock.applyNewChallange
+import com.example.vkr_new_disign.networkBlock.getMyId
 import com.example.vkr_new_disign.networkBlock.getToken
 import com.example.vkr_new_disign.ui.theme.VKR_new_disignTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.*
 
-class Main_Login_Loading : ComponentActivity() {
+
+class demoLoadActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,40 +34,30 @@ class Main_Login_Loading : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-
                     LoadingIndicator()
+                }
+                GlobalScope.launch(Dispatchers.Main) {
+                    // Вызываем метод get() из httpClient внутри suspend функции
+                    var token = intent.getStringExtra("token")
+                    var body = intent.getStringExtra("body")
 
-                    GlobalScope.launch(Dispatchers.Main) {
-                        // Вызываем метод get() из httpClient внутри suspend функции
-                        val response = getToken()
-                        // Обрабатываем ответ от сервера
-                        handleResponse(response)
-                    }
+                    var id = getMyId(token!!)
 
+                    val response = applyNewChallange(id, body!!)
+                    // Обрабатываем ответ от сервера
+                    handleResponse()
                 }
             }
         }
     }
 
-    private fun handleResponse(response: String) {
+
+
+    private fun handleResponse() {
         // Обрабатываем ответ от сервера
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.putExtra("token", response)
+        val intent = Intent(this, AllChallengesActivity::class.java)
+        finish()
         // Запускаем activity после получения ответа от сервера
         startActivity(intent)
     }
-}
-
-
-
-
-
-@Composable
-fun LoadingIndicator() {
-    CircularProgressIndicator(
-        modifier = Modifier
-            .size(50.dp)
-            .padding(16.dp),
-        color = MaterialTheme.colors.primary
-    )
 }

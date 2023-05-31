@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -23,20 +22,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vkr_new_disign.mathBlock.Gen
 import com.example.vkr_new_disign.mathBlock.expression
+import com.example.vkr_new_disign.networkBlock.addAryphProg
+import com.example.vkr_new_disign.networkBlock.addDerProg
+import com.example.vkr_new_disign.networkBlock.getDeriv
+
 import com.example.vkr_new_disign.ui.theme.VKR_new_disignTheme
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-private val showDialog = mutableStateOf(false)
-var problem = mutableStateOf("")
-var stud_ans = mutableStateOf("")
+var appproblem = mutableStateOf("")
+var appstud_ans = mutableStateOf("")
+var token = mutableStateOf("")
 
-class AryphTesterActivity : ComponentActivity() {
-
+class AryphAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val sharedPreferences = getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+        token.value = sharedPreferences.getString("jwt_token", null).toString()
         do{
-            problem.value = Gen(lengh = 10)
-        }while (problem.value.length < 3)
+            appproblem.value = Gen(lengh = 10)
+        }while (appproblem.value.length < 3)
 
         setContent {
             VKR_new_disignTheme {
@@ -51,7 +57,7 @@ class AryphTesterActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Calc()
+                        CalcApp()
                     }
                 }
             }
@@ -59,10 +65,9 @@ class AryphTesterActivity : ComponentActivity() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun Calc(){
+fun CalcApp(){
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,7 +92,7 @@ fun Calc(){
                 backgroundColor = MaterialTheme.colors.secondaryVariant
 
             ) {
-                Text(text = problem.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
+                Text(text = appproblem.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
             }
             Spacer(modifier = Modifier.width(15.dp))
         }
@@ -111,17 +116,11 @@ fun Calc(){
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(text = stud_ans.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
+                    Text(text = appstud_ans.value, fontSize = 20.sp, modifier = Modifier.padding(20.dp), textAlign = TextAlign.Center, color = MaterialTheme.colors.primaryVariant, style =MaterialTheme.typography.button)
                 }
             }
             Spacer(modifier = Modifier.width(15.dp))
         }
-
-////        задача
-//        boxMaker(text = problem.value, modifier = Modifier.weight(1f).border(2.dp, Color.Black),)
-//
-////        ответ пользователя
-//        boxMaker(text = stud_ans.value, modifier = Modifier.weight(2f).border(2.dp, Color.Black),)
 
         // Блок с кнопками
         Box(
@@ -135,7 +134,7 @@ fun Calc(){
                 modifier = Modifier
                     .fillMaxSize()
             ){
-                btnBlock()
+                btnBlockApp()
             }
         }
 
@@ -144,15 +143,15 @@ fun Calc(){
 
 // Блок с кнопками
 @Composable
-fun btnBlock(){
+fun btnBlockApp(){
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        btnRow(f_b = "1", s_b = "2", t_b = "3")
-        btnRow(f_b = "4", s_b = "5", t_b = "6")
-        btnRow(f_b = "7", s_b = "8", t_b = "9")
-        btnRow(f_b = "←", s_b = "0", t_b = "\uD83D\uDC4C")
+        btnRowApp(f_b = "1", s_b = "2", t_b = "3")
+        btnRowApp(f_b = "4", s_b = "5", t_b = "6")
+        btnRowApp(f_b = "7", s_b = "8", t_b = "9")
+        btnRowApp(f_b = "←", s_b = "0", t_b = "\uD83D\uDC4C")
         Row(
 
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -160,7 +159,7 @@ fun btnBlock(){
                 .fillMaxWidth()
 
         ) {
-            btnNew(name = "-", width = 200.dp)
+            btnNewApp(name = "-", width = 200.dp)
         }
 
     }
@@ -169,7 +168,7 @@ fun btnBlock(){
 
 // Строка кнопок
 @Composable
-fun btnRow(f_b: String, s_b: String, t_b: String){
+fun btnRowApp(f_b: String, s_b: String, t_b: String){
     Row(
 
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -177,50 +176,16 @@ fun btnRow(f_b: String, s_b: String, t_b: String){
             .fillMaxWidth()
 
     ) {
-        btnNew(name = f_b)
-        btnNew(name = s_b)
-        btnNew(name = t_b)
+        btnNewApp(name = f_b)
+        btnNewApp(name = s_b)
+        btnNewApp(name = t_b)
     }
 }
 
 // Отдельная кнопка
 @Composable
-fun btnNew(name: String, width: Dp = 100.dp){
-//    val mContext = LocalContext.current
-//
-//
-//    Button(
-//        onClick = {
-//            when (name) {
-//                "←" -> {
-//                    stud_ans.value = stud_ans.value.dropLast(1)
-//                }
-//                "\uD83D\uDC4C" -> {
-//                    if (stud_ans.value == expression(s = problem.value, i = 0).a.toString()){
-//                        mToast("Yeah!!!", mContext)
-//
-//                        stud_ans.value = ""
-//
-//                        problem.value = Gen(lengh = 10)
-//
-//
-//                    } else{
-//                        mToast("NO!!!", mContext)
-//                    }
-//                }
-//                else -> {
-//                    stud_ans.value = stud_ans.value + name
-//                }
-//            }
-//        },
-//        Modifier
-//            .width(width),
-//        border = BorderStroke(1.dp, Color.Green),
-//        shape = RoundedCornerShape(50),
-//        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Green)
-//    ) {
-//        Text(text = name, fontSize = 30.sp)
-//    }
+fun btnNewApp(name: String, width: Dp = 100.dp){
+
     val mContext = LocalContext.current
     var color: Color
     if(name == "\uD83D\uDC4C" || name == "←"){
@@ -233,15 +198,20 @@ fun btnNew(name: String, width: Dp = 100.dp){
         onClick = {
             when (name) {
                 "←" -> {
-                    stud_ans.value = stud_ans.value.dropLast(1)
+                    appstud_ans.value = appstud_ans.value.dropLast(1)
                 }
                 "\uD83D\uDC4C" -> {
-                    if (stud_ans.value == expression(s = problem.value, i = 0).a.toString()) {
+                    if (appstud_ans.value == expression(s = appproblem.value, i = 0).a.toString()) {
                         mToast("Yeah!!!", mContext)
 
-                        stud_ans.value = ""
+                        appstud_ans.value = ""
 
-                        problem.value = Gen(lengh = 10)
+                        appproblem.value = Gen(lengh = 10)
+
+                        GlobalScope.launch(Dispatchers.Main) {
+                            addAryphProg(token.value)
+                        }
+
 
 
                     } else {
@@ -249,7 +219,7 @@ fun btnNew(name: String, width: Dp = 100.dp){
                     }
                 }
                 else -> {
-                    stud_ans.value = stud_ans.value + name
+                    appstud_ans.value = appstud_ans.value + name
                 }
             }
         },
